@@ -15,7 +15,7 @@
 		51141A711BE8BCD2000239C1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 51141A6F1BE8BCD2000239C1 /* LaunchScreen.storyboard */; };
 		51141A7C1BE8BCD2000239C1 /* RBMenuDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 51141A7B1BE8BCD2000239C1 /* RBMenuDemoTests.m */; };
 		51141A871BE8BCD2000239C1 /* RBMenuDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 51141A861BE8BCD2000239C1 /* RBMenuDemoUITests.m */; };
-		51141A971BE8BD33000239C1 /* RBMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 51141A961BE8BD33000239C1 /* RBMenu.m */; };
+		5115F8641BE9DD4F007951E0 /* RBMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 5115F8631BE9DD4F007951E0 /* RBMenu.m */; };
 		51F73C991BE8C25100122F44 /* image.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51F73C981BE8C25100122F44 /* image.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -53,8 +53,8 @@
 		51141A821BE8BCD2000239C1 /* RBMenuDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RBMenuDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		51141A861BE8BCD2000239C1 /* RBMenuDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RBMenuDemoUITests.m; sourceTree = "<group>"; };
 		51141A881BE8BCD2000239C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		51141A951BE8BD33000239C1 /* RBMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBMenu.h; sourceTree = "<group>"; };
-		51141A961BE8BD33000239C1 /* RBMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBMenu.m; sourceTree = "<group>"; };
+		5115F8621BE9DD4F007951E0 /* RBMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBMenu.h; sourceTree = "<group>"; };
+		5115F8631BE9DD4F007951E0 /* RBMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBMenu.m; sourceTree = "<group>"; };
 		51F73C981BE8C25100122F44 /* image.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = image.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -86,7 +86,7 @@
 		51141A551BE8BCD2000239C1 = {
 			isa = PBXGroup;
 			children = (
-				51141A941BE8BD33000239C1 /* RBMenu */,
+				5115F8611BE9DD4F007951E0 /* RBMenu */,
 				51141A601BE8BCD2000239C1 /* RBMenuDemo */,
 				51141A7A1BE8BCD2000239C1 /* RBMenuDemoTests */,
 				51141A851BE8BCD2000239C1 /* RBMenuDemoUITests */,
@@ -147,13 +147,14 @@
 			path = RBMenuDemoUITests;
 			sourceTree = "<group>";
 		};
-		51141A941BE8BD33000239C1 /* RBMenu */ = {
+		5115F8611BE9DD4F007951E0 /* RBMenu */ = {
 			isa = PBXGroup;
 			children = (
-				51141A951BE8BD33000239C1 /* RBMenu.h */,
-				51141A961BE8BD33000239C1 /* RBMenu.m */,
+				5115F8621BE9DD4F007951E0 /* RBMenu.h */,
+				5115F8631BE9DD4F007951E0 /* RBMenu.m */,
 			);
-			path = RBMenu;
+			name = RBMenu;
+			path = ../RBMenu;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -287,7 +288,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				51141A971BE8BD33000239C1 /* RBMenu.m in Sources */,
+				5115F8641BE9DD4F007951E0 /* RBMenu.m in Sources */,
 				51141A691BE8BCD2000239C1 /* ViewController.m in Sources */,
 				51141A661BE8BCD2000239C1 /* AppDelegate.m in Sources */,
 				51141A631BE8BCD2000239C1 /* main.m in Sources */,

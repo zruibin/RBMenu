@@ -1,13 +1,12 @@
 //
 //  RBMenu.h
-//  AnimationDemo
+//  RBMenu
 //
 //  Created by zruibin on 15/11/3.
 //  Copyright © 2015年 RBCHOW. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-
 
 @interface RBMenuItem : NSObject
 
@@ -37,16 +36,14 @@ typedef NS_ENUM(NSInteger, RBMenuArrowDirection) {
 
 typedef void (^OnTouchBlock)(NSInteger touchIndex, NSString *touchTitle);
 
-@interface RBMenu : UIView
+@interface RBMenu : NSObject
 
-@property (nonatomic, copy) OnTouchBlock onTouchBlock;
++ (void)showMenuInView:(UIView *)view
+            fromRect:(CGRect)rect
+            menuItems:(NSArray *)menuItems
+            arrowDirection:(RBMenuArrowDirection)arrowDirection;
 
-+ (void) showMenuInView:(UIView *)view
-               fromRect:(CGRect)rect
-              menuItems:(NSArray *)menuItems
-         arrowDirection:(RBMenuArrowDirection)arrowDirection;
-
-+ (void) dismissMenu;
++ (void)dismissMenu;
 
 /*设置背景颜色*/
 + (void)setTintColor:(UIColor *) tintColor;
@@ -61,7 +58,9 @@ typedef void (^OnTouchBlock)(NSInteger touchIndex, NSString *touchTitle);
 + (void)setTitleHltColor:(UIColor *)titleHltColor;
 
 /*设置点击回调*/
-+ (void) makeOnTouchBlock:(OnTouchBlock) onTouchBlock;
++ (void)makeOnTouchBlock:(OnTouchBlock) onTouchBlock;
 
+/*默认为120.0f*/
++ (void)setMenuWidth:(CGFloat)width;
 
 @end
