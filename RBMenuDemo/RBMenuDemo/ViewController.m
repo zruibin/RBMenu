@@ -28,8 +28,6 @@
 
 
 - (IBAction)upLeftAction:(UIButton *)sender {
-    
-    CGPoint point = CGPointMake(CGRectGetMinX(sender.frame) - 60, CGRectGetMaxY(sender.frame));
     [self makeTheMenu:sender.frame arrowDirection:RBMenuArrowDirectionUpLeft];
 }
 
@@ -69,16 +67,25 @@
 {
     NSArray *items = @[
                        [RBMenuItem menuItem:@"1111" image:[UIImage imageNamed:@"rateDark"] hltImage:[UIImage imageNamed:@"rateLight"] titleAlignment:0],
-                       [RBMenuItem menuItem:@"22222222" image:[UIImage imageNamed:@"rateDark"] hltImage:[UIImage imageNamed:@"rateLight"] titleAlignment:0],
+                       [RBMenuItem menuItem:@"22222222" image:[UIImage imageNamed:@"rateDark"] hltImage:nil titleAlignment:0],
                        [RBMenuItem menuItem:@"433333" image:nil hltImage:nil titleAlignment:NSTextAlignmentCenter],
                        [RBMenuItem menuItem:@"44444" image:[UIImage imageNamed:@"rateDark"] hltImage:[UIImage imageNamed:@"rateLight"] titleAlignment:0],
                        [RBMenuItem menuItem:@"55555" image:[UIImage imageNamed:@"rateDark"] hltImage:[UIImage imageNamed:@"rateLight"] titleAlignment:0]
                        ];
     
     [RBMenu showMenuInView:self.view fromRect:rect menuItems:items arrowDirection:arrowDirect];
+    
+//    [RBMenu setMenuWidth:160.0f];
+//    [RBMenu setTintColor:[UIColor redColor]];
+//    [RBMenu setLineColor:[UIColor greenColor]];
+//    [RBMenu setTitleTintColor:[UIColor blackColor]];
+//    [RBMenu setTitleHltColor:[UIColor greenColor]];
+    
     [RBMenu makeOnTouchBlock:^(NSInteger touchIndex, NSString *touchTitle) {
         NSLog(@"index:%ld, title:%@", (long)touchIndex, touchTitle);
     }];
+    
+
 }
 
 @end

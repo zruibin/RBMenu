@@ -1,6 +1,6 @@
 //
 //  RBMenu.m
-//  AnimationDemo
+//  RBMenu
 //
 //  Created by  zruibin on 15/11/3.
 //  Copyright © 2015年 RBCHOW. All rights reserved.
@@ -10,12 +10,14 @@
 
 #pragma mark - RBMenuItem
 
+#define RBMENU_VIEW_TAG 101101
+
 @implementation RBMenuItem
 
 + (instancetype)menuItem:(NSString *)title
-                   image:(UIImage *)image
-                hltImage:(UIImage *)hltImage
-          titleAlignment:(NSTextAlignment)titleAlignment;
+                        image:(UIImage *)image
+                        hltImage:(UIImage *)hltImage
+                        titleAlignment:(NSTextAlignment)titleAlignment;
 {
     RBMenuItem *item = [[RBMenuItem alloc] init];
     item.title = title;
@@ -32,8 +34,9 @@
 @interface RBMenuOverlay : UIView
 @end
 
-@implementation RBMenuOverlay
+@class RBMenu;
 
+@implementation RBMenuOverlay
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -54,12 +57,12 @@
 - (void)singleTap:(UITapGestureRecognizer *)recognizer
 {
     for (UIView *v in self.subviews) {
-        if ([v isKindOfClass:[RBMenu class]]) {
+        if (v.tag == RBMENU_VIEW_TAG) {
             
             CGPoint pt = [recognizer locationInView:self];
             UIView *view = [self hitTest:pt withEvent:nil];
             if (view != v) {
-                [RBMenu dismissMenu];
+                [RBMenu  dismissMenu];
             }
         }
     }
@@ -67,10 +70,9 @@
 
 @end
 
+#pragma mark - RBMenuView
 
-#pragma mark - RBMenu
-
-@interface RBMenu ()
+@interface RBMenuView : UIView
 
 @property (nonatomic, assign) RBMenuArrowDirection arrowDirection;
 @property (nonatomic, assign) NSInteger touchIndex;
@@ -80,33 +82,39 @@
 @property (nonatomic, strong) UIColor *titleHltColor;
 @property (nonatomic, assign) NSTextAlignment titleAlignment;
 @property (nonatomic, strong) NSArray *items;
+@property (nonatomic, assign) CGRect relateRect;
 
+@property (nonatomic, copy) OnTouchBlock onTouchBlock;
+
+- (void)showMenuInView:(UIView *)view
+            fromRect:(CGRect)rect
+            menuItems:(NSArray *)menuItems
+            arrowDirection:(RBMenuArrowDirection)arrowDirection;
 - (void) dismiss;
 - (CGRect)configTheRect:(CGRect)rect;
 
 @end
 
-
-
-static const CGFloat ITEM_WIDTH = 120.0f;
+static CGFloat ITEM_WIDTH = 120.0f;
 static const CGFloat ITEM_HEIGHT = 40.0f;
 static NSInteger ITEMS = 0;
 
-@implementation RBMenu
+@implementation RBMenuView
 
-+ (RBMenu *)shareMenu
++ (RBMenuView *)shareMenu
 {
-    static RBMenu *menu;
+    static RBMenuView *menuView;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        menu = [[RBMenu alloc] init];
-        menu.backgroundColor = [UIColor clearColor];
-        menu.gTintColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.8];
-        menu.lineColor =  [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.4];
-        menu.titleTintColor = [UIColor whiteColor];
-        menu.titleHltColor = [UIColor orangeColor];
+        menuView = [[RBMenuView alloc] init];
+        menuView.backgroundColor = [UIColor clearColor];
+        menuView.gTintColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.8];
+        menuView.lineColor =  [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.4];
+        menuView.titleTintColor = [UIColor whiteColor];
+        menuView.titleHltColor = [UIColor orangeColor];
+        menuView.tag = RBMENU_VIEW_TAG;
     });
-    return menu;
+    return menuView;
 }
 
 #pragma mark -
@@ -124,17 +132,7 @@ static NSInteger ITEMS = 0;
     CGFloat x01 = 0, y01 =0, x02 = 0, y02 = 0, x03 = 0, y03 = 0;
 
     switch (_arrowDirection) {
-        case RBMenuArrowDirectionNone:
-        case RBMenuArrowDirectionUp:
-        {
-            x01 = CGRectGetMidX(rect);
-            y01 = 0;
-            x02 = CGRectGetMidX(rect) - 10;
-            y02 = 10;
-            x03 = CGRectGetMidX(rect) + 10;
-            y03 = 10;
-            break;
-        }
+        
         case RBMenuArrowDirectionUpLeft:
         {
             x01 = CGRectGetMidX(rect) - CGRectGetMidX(rect) / 2;
@@ -153,16 +151,6 @@ static NSInteger ITEMS = 0;
             y02 = 10;
             x03 = CGRectGetMidX(rect) + CGRectGetMidX(rect) / 2 + 10;
             y03 = 10;
-            break;
-        }
-        case RBMenuArrowDirectionDown:
-        {
-            x01 = CGRectGetMidX(rect);
-            y01 = CGRectGetHeight(rect);
-            x02 = CGRectGetMidX(rect) - 10;
-            y02 = CGRectGetHeight(rect) - 10;
-            x03 = CGRectGetMidX(rect) + 10;
-            y03 = CGRectGetHeight(rect) - 10;
             break;
         }
         case RBMenuArrowDirectionDownLeft:
@@ -205,11 +193,31 @@ static NSInteger ITEMS = 0;
             y03 = CGRectGetMidY(rect) + 10;
             break;
         }
+        case RBMenuArrowDirectionDown:
+        {
+            x01 = CGRectGetMidX(rect);
+            y01 = CGRectGetHeight(rect);
+            x02 = CGRectGetMidX(rect) - 10;
+            y02 = CGRectGetHeight(rect) - 10;
+            x03 = CGRectGetMidX(rect) + 10;
+            y03 = CGRectGetHeight(rect) - 10;
+            break;
+        }
+        case RBMenuArrowDirectionNone:
+        case RBMenuArrowDirectionUp:
+        {
+            x01 = CGRectGetMidX(rect);
+            y01 = 0;
+            x02 = CGRectGetMidX(rect) - 10;
+            y02 = 10;
+            x03 = CGRectGetMidX(rect) + 10;
+            y03 = 10;
+            break;
+        }
             
         default:
             break;
     }
-    
     
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     CGContextBeginPath(ctx);
@@ -293,7 +301,7 @@ static NSInteger ITEMS = 0;
         CGFloat imgXY = 20;
         CGFloat titleX = 40;
         CGFloat padding = 5;
-        if (iconImg == nil || iconTouchImg == nil) {
+        if (iconImg == nil && iconTouchImg == nil) {
             titleX = 20;
             padding = 0;
         }
@@ -346,9 +354,6 @@ static NSInteger ITEMS = 0;
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
     [super touchesEnded:touches withEvent:event];
-//    UITouch *touch = [touches anyObject];
-//    CGPoint point  = [touch locationInView:self];
-    
     self.touchIndex = -1;
     [self setNeedsDisplay];
 }
@@ -356,28 +361,62 @@ static NSInteger ITEMS = 0;
 - (void)touchesCancelled:(nullable NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
     [super touchesCancelled:touches withEvent:event];
-//    UITouch *touch = [touches anyObject];
-//    CGPoint point  = [touch locationInView:self];
+    UITouch *touch = [touches anyObject];
+    CGPoint point  = [touch locationInView:self];
     
     if (self.onTouchBlock) {
-        RBMenuItem *item = self.items[self.touchIndex];
-        self.onTouchBlock(self.touchIndex, item.title);
+        if (CGRectContainsPoint(CGRectMake(10, 10, ITEM_WIDTH, ITEM_HEIGHT * ITEMS), point)) {
+            RBMenuItem *item = self.items[self.touchIndex];
+            self.onTouchBlock(self.touchIndex, item.title);
+        }
     }
     [self dismiss];
     self.touchIndex = -1;
-    
-    
 }
 
 #pragma mark -
 
+- (void)showMenuInView:(UIView *)view
+            fromRect:(CGRect)rect
+            menuItems:(NSArray *)menuItems
+            arrowDirection:(RBMenuArrowDirection)arrowDirection
+{
+    RBMenuOverlay *overlay = [[RBMenuOverlay alloc] initWithFrame:view.bounds];
+
+    self.items = menuItems;
+    self.touchIndex = -1;
+    [self setNeedsDisplay];
+    [overlay addSubview:self];
+    [view addSubview:overlay];
+    
+    ITEMS = menuItems.count;
+    
+    self.arrowDirection = arrowDirection;
+    self.relateRect = rect;
+    rect = [self configTheRect:rect];
+    
+    self.frame = rect;
+    self.alpha = 0;
+    
+    [UIView animateWithDuration:0.2f animations:^{
+        self.alpha = 1.0f;
+    }];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(orientationWillChange:)
+                                                 name:UIApplicationWillChangeStatusBarOrientationNotification
+                                               object:nil];
+}
+
 - (void)dismiss
 {
-    RBMenu *menu = self;
+    RBMenuView *menu = self;
     RBMenuOverlay *overlay = (RBMenuOverlay *)menu.superview;
     if (!overlay) {
         return ;
     }
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
     
     [UIView animateWithDuration:0.2f animations:^{
         menu.alpha = 0.0f;
@@ -385,6 +424,11 @@ static NSInteger ITEMS = 0;
         [menu removeFromSuperview];
         [overlay removeFromSuperview];
     }];
+}
+
+- (void)orientationWillChange:(NSNotification *)notification
+{
+    [self dismiss];
 }
 
 - (CGRect)configTheRect:(CGRect)rect
@@ -395,7 +439,7 @@ static NSInteger ITEMS = 0;
             rect.origin.y = CGRectGetMaxY(rect);
             break;
         case RBMenuArrowDirectionUpRight:
-            rect.origin.x = CGRectGetMinX(rect) - ITEM_WIDTH / 2;
+            rect.origin.x = CGRectGetMinX(rect) - ITEM_WIDTH / 2 - 10;
             rect.origin.y = CGRectGetMaxY(rect);
             break;
         case RBMenuArrowDirectionDownLeft:
@@ -403,7 +447,7 @@ static NSInteger ITEMS = 0;
             rect.origin.y = CGRectGetMinY(rect) - ITEM_HEIGHT * ITEMS - 20;
             break;
         case RBMenuArrowDirectionDownRight:
-            rect.origin.x = CGRectGetMinX(rect) - ITEM_WIDTH / 2;
+            rect.origin.x = CGRectGetMinX(rect) - ITEM_WIDTH / 2 - 10;
             rect.origin.y = CGRectGetMinY(rect) - ITEM_HEIGHT * ITEMS - 20;
             break;
         case RBMenuArrowDirectionLeft:
@@ -414,117 +458,111 @@ static NSInteger ITEMS = 0;
             rect.origin.x = CGRectGetMinX(rect) - ITEM_WIDTH - 20;
             rect.origin.y = CGRectGetMidY(rect) - ITEM_HEIGHT * ITEMS / 2 - 10;
             break;
-        case RBMenuArrowDirectionUp:
-            rect.origin.x = CGRectGetMidX(rect) - ITEM_WIDTH / 2 - 10;
-            rect.origin.y = CGRectGetMaxY(rect);
-            break;
         case RBMenuArrowDirectionDown:
             rect.origin.x = CGRectGetMidX(rect) - ITEM_WIDTH / 2 - 10;
             rect.origin.y = CGRectGetMinY(rect) - ITEM_HEIGHT * ITEMS - 20;
+            break;
+        case RBMenuArrowDirectionNone:
+        case RBMenuArrowDirectionUp:
+            rect.origin.x = CGRectGetMidX(rect) - ITEM_WIDTH / 2 - 10;
+            rect.origin.y = CGRectGetMaxY(rect);
             break;
             
         default:
             break;
     }
 
-    
-    return rect;
-}
-
-
-#pragma mark -
-
-+ (void) showMenuInView:(UIView *)view fromRect:(CGRect)rect menuItems:(NSArray *)menuItems arrowDirection:(RBMenuArrowDirection)arrowDirection
-{
-    if (menuItems.count == 0) {
-        return ;
-    }
-    RBMenuOverlay *overlay = [[RBMenuOverlay alloc] initWithFrame:view.bounds];
-    RBMenu *menu = [self shareMenu];
-    menu.items = menuItems;
-    menu.touchIndex = -1;
-    [menu setNeedsDisplay];
-    [overlay addSubview:menu];
-    [view addSubview:overlay];
-   
-    ITEMS = menuItems.count;
-    
-    menu.arrowDirection = arrowDirection;
-    rect = [menu configTheRect:rect];
-    
     rect.size.width = ITEM_WIDTH + 20;
     rect.size.height = ITEM_HEIGHT * ITEMS + 20;
-    
-    menu.frame = rect;
-    menu.alpha = 0;
-
-    [UIView animateWithDuration:0.2f animations:^{
-        menu.alpha = 1.0f;
-    }];
-    
-}
-
-+ (void) dismissMenu
-{
-    RBMenu *menu = [self shareMenu];
-    [menu dismiss];
-}
-
-+ (void) setTintColor:(UIColor *) tintColor
-{
-    RBMenu *menu = [self shareMenu];
-    if (!menu.superview) {
-        return ;
-    }
-    menu.gTintColor = tintColor;
-}
-
-+ (void) setLineColor:(UIColor *)lineColor
-{
-    RBMenu *menu = [self shareMenu];
-    if (!menu.superview) {
-        return ;
-    }
-    menu.lineColor = lineColor;
-}
-
-+ (void)setTitleTintColor:(UIColor *)titleTintColor
-{
-    RBMenu *menu = [self shareMenu];
-    if (!menu.superview) {
-        return ;
-    }
-    menu.titleTintColor = titleTintColor;
-}
-
-+ (void)setTitleHltColor:(UIColor *)titleHltColor
-{
-    RBMenu *menu = [self shareMenu];
-    if (!menu.superview) {
-        return ;
-    }
-    menu.titleHltColor = titleHltColor;
-}
-
-
-+ (void) makeOnTouchBlock:(OnTouchBlock) onTouchBlock
-{
-    RBMenu *menu = [self shareMenu];
-    if (!menu.superview) {
-        return ;
-    }
-    if (onTouchBlock) {
-        [menu setOnTouchBlock:onTouchBlock];
-    }
+    return rect;
 }
 
 
 @end
 
+#pragma mark - RBMenu
+
+@implementation RBMenu
+
+
++ (void)showMenuInView:(UIView *)view
+            fromRect:(CGRect)rect
+            menuItems:(NSArray *)menuItems
+            arrowDirection:(RBMenuArrowDirection)arrowDirection
+{
+    if (menuItems.count == 0) {
+        return ;
+    }
+    [[RBMenuView shareMenu] showMenuInView:view fromRect:rect menuItems:menuItems arrowDirection:arrowDirection];
+}
 
 
 
++ (void)dismissMenu
+{
+    RBMenuView *menuView = [RBMenuView shareMenu];
+    [menuView dismiss];
+}
+
++ (void)setTintColor:(UIColor *) tintColor
+{
+    RBMenuView *menuView = [RBMenuView shareMenu];
+    if (!menuView.superview) {
+        return ;
+    }
+    menuView.gTintColor = tintColor;
+}
+
++ (void)setLineColor:(UIColor *)lineColor
+{
+    RBMenuView *menuView = [RBMenuView shareMenu];
+    if (!menuView.superview) {
+        return ;
+    }
+    menuView.lineColor = lineColor;
+}
+
++ (void)setTitleTintColor:(UIColor *)titleTintColor
+{
+    RBMenuView *menuView = [RBMenuView shareMenu];
+    if (!menuView.superview) {
+        return ;
+    }
+    menuView.titleTintColor = titleTintColor;
+}
+
++ (void)setTitleHltColor:(UIColor *)titleHltColor
+{
+    RBMenuView *menuView = [RBMenuView shareMenu];
+    if (!menuView.superview) {
+        return ;
+    }
+    menuView.titleHltColor = titleHltColor;
+}
 
 
++ (void) makeOnTouchBlock:(OnTouchBlock) onTouchBlock
+{
+    RBMenuView *menuView = [RBMenuView shareMenu];
+    if (!menuView.superview) {
+        return ;
+    }
+    if (onTouchBlock) {
+        [menuView setOnTouchBlock:onTouchBlock];
+    }
+}
+
++ (void)setMenuWidth:(CGFloat)width
+{
+    CGFloat screenW = [UIScreen mainScreen].bounds.size.width / 2;
+    if (width <= screenW && width > ITEM_WIDTH) {
+        ITEM_WIDTH = width;
+        RBMenuView *menuView = [RBMenuView shareMenu];
+        CGRect frame = menuView.frame;
+        frame = [menuView configTheRect:menuView.relateRect];
+        menuView.frame = frame;
+    }
+}
 
 
+@end
