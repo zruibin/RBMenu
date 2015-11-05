@@ -12,7 +12,7 @@
 
 @property (readwrite, nonatomic, strong) UIImage *image;
 @property (readwrite, nonatomic, strong) UIImage *hltImage;
-@property (readwrite, nonatomic, strong) NSString *title;
+@property (readwrite, nonatomic, copy) NSString *title;
 @property (readwrite, nonatomic, assign) NSTextAlignment titleAlignment;
 
 + (instancetype)menuItem:(NSString *)title
@@ -22,26 +22,13 @@
 
 @end
 
-typedef NS_ENUM(NSInteger, RBMenuArrowDirection) {
-    RBMenuArrowDirectionNone,
-    RBMenuArrowDirectionUp,
-    RBMenuArrowDirectionUpLeft,
-    RBMenuArrowDirectionUpRight,
-    RBMenuArrowDirectionDown,
-    RBMenuArrowDirectionDownLeft,
-    RBMenuArrowDirectionDownRight,
-    RBMenuArrowDirectionLeft,
-    RBMenuArrowDirectionRight
-};
-
 typedef void (^OnTouchBlock)(NSInteger touchIndex, NSString *touchTitle);
 
 @interface RBMenu : NSObject
 
 + (void)showMenuInView:(UIView *)view
             fromRect:(CGRect)rect
-            menuItems:(NSArray *)menuItems
-            arrowDirection:(RBMenuArrowDirection)arrowDirection;
+            menuItems:(NSArray *)menuItems;
 
 + (void)dismissMenu;
 

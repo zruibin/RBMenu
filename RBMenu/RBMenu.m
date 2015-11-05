@@ -72,6 +72,18 @@
 
 #pragma mark - RBMenuView
 
+typedef NS_ENUM(NSInteger, RBMenuArrowDirection) {
+    RBMenuArrowDirectionNone,
+    RBMenuArrowDirectionUp,
+    RBMenuArrowDirectionUpLeft,
+    RBMenuArrowDirectionUpRight,
+    RBMenuArrowDirectionDown,
+    RBMenuArrowDirectionDownLeft,
+    RBMenuArrowDirectionDownRight,
+    RBMenuArrowDirectionLeft,
+    RBMenuArrowDirectionRight
+};
+
 @interface RBMenuView : UIView
 
 @property (nonatomic, assign) RBMenuArrowDirection arrowDirection;
@@ -81,16 +93,18 @@
 @property (nonatomic, strong) UIColor *titleTintColor;
 @property (nonatomic, strong) UIColor *titleHltColor;
 @property (nonatomic, assign) NSTextAlignment titleAlignment;
-@property (nonatomic, strong) NSArray *items;
+@property (nonatomic, copy) NSArray *items;
 @property (nonatomic, assign) CGRect relateRect;
 
 @property (nonatomic, copy) OnTouchBlock onTouchBlock;
 
 - (void)showMenuInView:(UIView *)view
             fromRect:(CGRect)rect
-            menuItems:(NSArray *)menuItems
-            arrowDirection:(RBMenuArrowDirection)arrowDirection;
+            menuItems:(NSArray *)menuItems;
+
 - (void) dismiss;
+
+- (RBMenuArrowDirection)configTheArrowDirection:(CGRect)rect;
 - (CGRect)configTheRect:(CGRect)rect;
 
 @end
@@ -377,9 +391,8 @@ static NSInteger ITEMS = 0;
 #pragma mark -
 
 - (void)showMenuInView:(UIView *)view
-            fromRect:(CGRect)rect
-            menuItems:(NSArray *)menuItems
-            arrowDirection:(RBMenuArrowDirection)arrowDirection
+              fromRect:(CGRect)rect
+             menuItems:(NSArray *)menuItems;
 {
     RBMenuOverlay *overlay = [[RBMenuOverlay alloc] initWithFrame:view.bounds];
 
@@ -391,7 +404,7 @@ static NSInteger ITEMS = 0;
     
     ITEMS = menuItems.count;
     
-    self.arrowDirection = arrowDirection;
+    self.arrowDirection = [self configTheArrowDirection:rect];
     self.relateRect = rect;
     rect = [self configTheRect:rect];
     
@@ -429,6 +442,67 @@ static NSInteger ITEMS = 0;
 - (void)orientationWillChange:(NSNotification *)notification
 {
     [self dismiss];
+}
+
+#pragma mark config
+
+- (RBMenuArrowDirection)configTheArrowDirection:(CGRect)rect
+{
+    CGPoint point = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+    
+    CGRect mainArea = [[UIScreen mainScreen] bounds];
+    CGFloat equalityW = CGRectGetWidth(mainArea) / 3;
+    CGFloat equalityH = CGRectGetHeight(mainArea) / 3;
+    
+    CGRect upLeftArea = CGRectMake(0, 0, equalityW, equalityH);
+    CGRect upCenterArea = CGRectMake(equalityW, 0, equalityW, equalityH);
+    CGRect upRightArea = CGRectMake(equalityW * 2, 0, equalityW, equalityH);
+    
+    CGRect centerLeftArea = CGRectMake(0, equalityH, equalityW, equalityH);
+    CGRect centerArea = CGRectMake(equalityW, equalityH, equalityW, equalityH);
+    CGRect centerRightArea = CGRectMake(equalityW * 2, equalityH, equalityW, equalityH);
+    
+    CGRect downLeftArea = CGRectMake(0, equalityH * 2, equalityW, equalityH);
+    CGRect downCeterArea = CGRectMake(equalityW, equalityH * 2, equalityW, equalityH);
+    CGRect downRightArea = CGRectMake(equalityW * 2, equalityH * 2, equalityW, equalityH);
+    
+    RBMenuArrowDirection arrowDirection = RBMenuArrowDirectionNone;
+    
+    if (CGRectContainsPoint(upLeftArea, point)) {
+        arrowDirection = RBMenuArrowDirectionUpLeft;
+    }
+    if (CGRectContainsPoint(upCenterArea, point)) {
+        arrowDirection = RBMenuArrowDirectionUp;
+    }
+    if (CGRectContainsPoint(upRightArea, point)) {
+        arrowDirection = RBMenuArrowDirectionUpRight;
+    }
+    
+    if (CGRectContainsPoint(centerLeftArea, point)) {
+        arrowDirection = RBMenuArrowDirectionLeft;
+    }
+    if (CGRectContainsPoint(centerArea, point)) {
+        if (CGRectContainsPoint(UIEdgeInsetsInsetRect(centerArea, UIEdgeInsetsMake(0, 0, equalityH / 2, 0)), point)) {
+            arrowDirection = RBMenuArrowDirectionUp;
+        } else {
+            arrowDirection = RBMenuArrowDirectionDown;
+        }
+    }
+    if (CGRectContainsPoint(centerRightArea, point)) {
+        arrowDirection = RBMenuArrowDirectionRight;
+    }
+    
+    if (CGRectContainsPoint(downLeftArea, point)) {
+        arrowDirection = RBMenuArrowDirectionDownLeft;
+    }
+    if (CGRectContainsPoint(downCeterArea, point)) {
+        arrowDirection = RBMenuArrowDirectionDown;
+    }
+    if (CGRectContainsPoint(downRightArea, point)) {
+        arrowDirection = RBMenuArrowDirectionDownRight;
+    }
+    
+    return arrowDirection;
 }
 
 - (CGRect)configTheRect:(CGRect)rect
@@ -484,19 +558,15 @@ static NSInteger ITEMS = 0;
 
 @implementation RBMenu
 
-
 + (void)showMenuInView:(UIView *)view
             fromRect:(CGRect)rect
             menuItems:(NSArray *)menuItems
-            arrowDirection:(RBMenuArrowDirection)arrowDirection
 {
     if (menuItems.count == 0) {
         return ;
     }
-    [[RBMenuView shareMenu] showMenuInView:view fromRect:rect menuItems:menuItems arrowDirection:arrowDirection];
+    [[RBMenuView shareMenu] showMenuInView:view fromRect:rect menuItems:menuItems];
 }
-
-
 
 + (void)dismissMenu
 {

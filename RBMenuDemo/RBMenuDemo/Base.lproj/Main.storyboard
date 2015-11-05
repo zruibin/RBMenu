@@ -114,6 +114,18 @@
                                     <action selector="leftAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1xU-lh-a9a"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="myr-uK-TMF">
+                                <rect key="frame" x="124" y="222" width="72" height="45"/>
+                                <color key="backgroundColor" red="0.99607843139999996" green="0.76078431369999999" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="72" id="FdR-YC-xEJ"/>
+                                    <constraint firstAttribute="height" constant="45" id="XCY-DX-hpN"/>
+                                </constraints>
+                                <state key="normal" title="center"/>
+                                <connections>
+                                    <action selector="centerAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gBx-c3-DUL"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -124,11 +136,13 @@
                             <constraint firstItem="k04-h6-eXo" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="B0a-IG-u0h"/>
                             <constraint firstItem="wci-9b-2dd" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="64" id="Gdp-e2-UwV"/>
                             <constraint firstItem="j93-Z8-TOo" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="KCE-JF-ODx"/>
+                            <constraint firstItem="myr-uK-TMF" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-40" id="KzX-8E-dly"/>
                             <constraint firstItem="YGv-2a-Zua" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="QHq-wD-ebl"/>
                             <constraint firstItem="wci-9b-2dd" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="R6r-VP-c5O"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Gqo-93-nqT" secondAttribute="trailing" constant="18" id="Ydy-h7-TM7"/>
                             <constraint firstItem="4xL-4P-S57" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="YlO-x1-QZw"/>
                             <constraint firstAttribute="trailingMargin" secondItem="j93-Z8-TOo" secondAttribute="trailing" constant="18" id="cVz-m7-R2X"/>
+                            <constraint firstItem="myr-uK-TMF" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="hcc-Eq-8d3"/>
                             <constraint firstItem="k04-h6-eXo" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="muB-7P-ppA"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="YGv-2a-Zua" secondAttribute="bottom" constant="49" id="nTn-D0-JaG"/>
                             <constraint firstItem="4xL-4P-S57" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="oGN-qU-zof"/>

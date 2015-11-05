@@ -12,10 +12,7 @@ NSArray *items = @[
      [RBMenuItem menuItem:@"44444" image:[UIImage imageNamed:@"rateDark"] hltImage:[UIImage imageNamed:@"rateLight"] titleAlignment:0]
 		];
     
-[RBMenu showMenuInView:self.view 
-    	fromRect:rect 
-    	menuItems:items 
-    	arrowDirection:arrowDirect];
+[RBMenu showMenuInView:self.view fromRect:rect menuItems:items];
     
     
 [RBMenu makeOnTouchBlock:^(NSInteger touchIndex, NSString *touchTitle) {
