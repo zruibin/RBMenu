@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = 'RBMenu'
   s.summary      = 'RBMenu.'
-  s.version      = '1.0'
+  s.version      = '1.2'
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.authors      = { 'Ruibin.Chow' => 'ruibin.chow@qq.com' }
   s.social_media_url = 'http://www.zruibin.cc'
