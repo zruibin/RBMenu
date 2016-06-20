@@ -625,7 +625,7 @@ static NSInteger ITEMS = 0;
 + (void)setMenuWidth:(CGFloat)width
 {
     CGFloat screenW = [UIScreen mainScreen].bounds.size.width / 2;
-    if (width <= screenW && width > ITEM_WIDTH) {
+    if (width <= screenW && width > 80.0f/*width > ITEM_WIDTH*/) {
         ITEM_WIDTH = width;
         RBMenuView *menuView = [RBMenuView shareMenu];
         CGRect frame = menuView.frame;
